@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"strconv"
 	"github.com/gorilla/mux"
@@ -39,5 +38,5 @@ func main() {
 	router.HandleFunc("/Person/{id}", GetPerson).Methods("GET")
 	router.HandleFunc("/Person/{id}", CreatePerson).Methods("POST")
 	router.HandleFunc("/Person/{id}", DeletePerson).Methods("DELETE")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	http.ListenAndServe(":12345", router)
 }
