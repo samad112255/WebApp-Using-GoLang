@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+
 	"github.com/gorilla/mux"
 )
 
@@ -21,9 +22,19 @@ type Address struct {
 var persons []Person
 
 func GetAllPersons(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(persons)
 }
 func GetPerson(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for _, person := range persons {
+		if person.ID == params["id"] {
+			json.NewEncoder(w).Encode(person)
+			return
+		}
+	}
+	json.NewEncoder(w).Encode(&Person{})
 }
 func CreatePerson(w http.ResponseWriter, r *http.Request) {
 }
@@ -32,7 +43,10 @@ func DeletePerson(w http.ResponseWriter, r *http.Request) {
 func main() {
 	router := mux.NewRouter()
 	for i := 1; i < 10; i++ {
-		persons = append(persons, Person{ID: strconv.Itoa(i), FirstName: ("Abdul Samad " + strconv.Itoa(i)), LastName: "Ahmed", Address: &Address{City: "karachi", Country: "Pakistan"}})
+		persons = append(persons, Person{ID: strconv.Itoa(i),
+			FirstName: ("Abdul Samad " + strconv.Itoa(i)),
+			LastName:  "Ahmed",
+			Address:   &Address{City: "karachi", Country: "Pakistan"}})
 	}
 	router.HandleFunc("/Persons", GetAllPersons).Methods("GET")
 	router.HandleFunc("/Person/{id}", GetPerson).Methods("GET")
